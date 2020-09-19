@@ -149,5 +149,17 @@ private: System::Void btnEmpezar_Click(System::Object^ sender, System::EventArgs
 		"¡Y ARRANCAN!";
 
 }
+	   void CambiarPos(int map[70], int probabilidad[10], int** Gamer)
+	   {
+		   int value = rand() % 10;
+
+		   int NuevaPos = **Gamer + probabilidad[value];
+
+		   //If abreviado de la nueva poscicion
+		   NuevaPos = NuevaPos >= 70 ? 69 : (NuevaPos < 0 ? 0 : NuevaPos);
+
+		   *Gamer = &map[NuevaPos];
+
+	   }
 };
 }
