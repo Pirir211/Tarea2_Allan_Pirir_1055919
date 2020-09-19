@@ -10,6 +10,7 @@ namespace Tarea2AllanPirir1055919 {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace Microsoft::VisualBasic;
 
 	/// <summary>
 	/// Resumen de MyForm
@@ -98,7 +99,7 @@ namespace Tarea2AllanPirir1055919 {
 			this->label1->Font = (gcnew System::Drawing::Font(L"MV Boli", 31.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->label1->ForeColor = System::Drawing::Color::Teal;
-			this->label1->Location = System::Drawing::Point(321, 35);
+			this->label1->Location = System::Drawing::Point(537, 21);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(524, 70);
 			this->label1->TabIndex = 4;
@@ -125,7 +126,7 @@ namespace Tarea2AllanPirir1055919 {
 			this->Controls->Add(this->btnEmpezar);
 			this->Controls->Add(this->DGVPista);
 			this->Name = L"MyForm";
-			this->Text = L"MyForm";
+			this->Text = L"Carrera";
 			this->Load += gcnew System::EventHandler(this, &MyForm::MyForm_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DGVPista))->EndInit();
 			this->ResumeLayout(false);
@@ -139,6 +140,8 @@ namespace Tarea2AllanPirir1055919 {
 		DGVPista->ColumnCount = 70;
 		DGVPista->RowCount = 2;
 		DGVPista->Rows[0]->Cells[0]->Value = "T-L";
+		
+		
 	}
 	private: System::Void DGVPista_CellContentClick(System::Object^ sender, System::Windows::Forms::DataGridViewCellEventArgs^ e) {
 	}
@@ -148,16 +151,101 @@ private: System::Void btnEmpezar_Click(System::Object^ sender, System::EventArgs
 	lblMostrar->Text = "¡BANG!" +
 		"¡Y ARRANCAN!";
 
-}
+	_sleep(1500);
+	// se crear el arreglo para poder posicionar en las diferentes posiciones 
+	int mapa[70];
+	// se crean los vectores 
+	// se lleno el arreglo con los movimientos posibles, es su respectiva posicion
+	int probabilidadTortuga[10] = { 3,3,3,3,3,-6,-6,1,1,1 };
+	int probabilidadLiebre[10] = { 0,0,9,9,-12,1,1,1,-2,-2 };
+
+	//Punteros definicion
+
+	int	*tortuga, *liebre;
+	//Ubicacion de liebre y conejo es la posicion 0 de mi vector
+	liebre = &mapa[0];
+	tortuga = &mapa[0];
+
+
+	//Creo variables y asigno valores al vector mapa
+	//para poder moverme con los punteros 
+	for (int i = 0; i < 70; i++)
+	{
+		mapa[i] = i + 1;
+	}
+
+	bool fin = false;
+	// se crea un contador para agregar las filas
+	int a = 0;
+	int ganador = 0;
+	while (!fin)
+	{
+		// cambia el paso de cada corredor cada vez que se repita el ciclo 
+		CambiarPos(mapa, probabilidadTortuga, &tortuga);
+		CambiarPos(mapa, probabilidadLiebre, &liebre);
+
+		// El ciclo muestra la posicion de los corredores
+		for (int i = 0; i < 70; i++)
+		{
+			if (tortuga == liebre && tortuga != &mapa[0] && tortuga != &mapa[69])
+			{
+				DGVPista->Rows[a]->Cells[i]->Value = "¡OUCH! ";
+			}
+
+			else if (tortuga == &mapa[i])
+			{
+				DGVPista->Rows[a]->Cells[i]->Value = "T";
+			}
+			else if (liebre == &mapa[i])
+			{
+				DGVPista->Rows[a]->Cells[i]->Value = "L ";
+			}
+			else 
+			{
+				DGVPista->Rows[a]->Cells[i]->Value = "";
+			}
+			
+		}
+		if (tortuga == &mapa[69])
+		{
+			
+			ganador = 1;
+			fin = true;
+		}
+		
+		else if (liebre == &mapa[69])
+		{
+			ganador = 2;
+			fin = true;
+		}
+		a++;
+		//Agrega otra fila para poder mostrar la posion, segun el ciclo de carrera
+		DGVPista->Rows->Add();
+		
+	}
+	if (ganador==1)
+	{
+		MessageBox::Show("¡LA TORTUGA GANA! ¡BRAVO! ");
+
+	}
+	else if (ganador==2)
+	{
+		MessageBox::Show("La liebre gana. Ni hablar");
+	}
+
+   }
 	   void CambiarPos(int map[70], int probabilidad[10], int** Gamer)
 	   {
+		   // se escoje un numero randon 
 		   int value = rand() % 10;
 
+		   // se le asigna una nueva posiocion al corredor 
 		   int NuevaPos = **Gamer + probabilidad[value];
 
-		   //If abreviado de la nueva poscicion
+		   
 		   NuevaPos = NuevaPos >= 70 ? 69 : (NuevaPos < 0 ? 0 : NuevaPos);
 
+		   // la posion  del corredor en el mapa
 		   *Gamer = &map[NuevaPos];
 
 	   }
